@@ -2,7 +2,6 @@ import re
 import pronouncing
 import json
 
-# Function to clean and normalize lyrics
 def clean_normalize_lyrics(lyrics_blob):
     lyrics_blob = re.sub(r'\[.*?\]', '', lyrics_blob)
     lyrics_blob = re.sub(r'\(.*?\)', '', lyrics_blob)
@@ -10,26 +9,20 @@ def clean_normalize_lyrics(lyrics_blob):
     lyrics_blob = re.sub(r'[^a-zA-Z0-9\s\']', '', lyrics_blob)
     return lyrics_blob
 
-# Function to read lyrics from a file
 def read_lyrics_from_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         return file.read()
 
-# Function to clean a line of text
 def clean_line(line):
     return re.sub(r'[^a-zA-Z\s]', '', line).lower().strip()
 
-# Main function to process the lyrics and generate the network data
 def main():
-    # File paths
-    input_file_path = '/home/bret/code/personal/networked-rhyming-words/eap.txt'
+    input_file_path = 'path/to/your/file.txt'
     network_data_path = 'network_data.json'
     
-    # Step 1: Read and clean lyrics
     lyrics_blob = read_lyrics_from_file(input_file_path)
     cleaned_lyrics = clean_normalize_lyrics(lyrics_blob)
 
-    # Step 2: Analyze rhymes and generate network data
     lines = cleaned_lyrics.split('\n')
     last_words = [clean_line(line).split()[-1] for line in lines if clean_line(line).split()]
 
@@ -61,6 +54,5 @@ def main():
         json.dump(graph_data, outfile, indent=4)
     print("Network data has been saved to 'network_data.json'")
 
-# Run the main function
 if __name__ == '__main__':
     main()
