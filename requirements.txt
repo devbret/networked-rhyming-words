@@ -1,0 +1,6 @@
+cmudict==1.0.27
+importlib_metadata==8.2.0
+importlib_resources==6.4.0
+pronouncing==0.2.0
+setuptools==72.1.0
+zipp==3.19.2
