@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+svg {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+.nodes circle {
+  stroke: aqua;
+  stroke-width: 2px;
+  fill: #fff;
+}
+.texts text {
+  font-size: 16px;
+  pointer-events: none;
+  text-anchor: middle;
+  fill: magenta;
+  font-weight: bold;
+}
