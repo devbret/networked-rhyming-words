@@ -1,4 +1,4 @@
-# Visualize Networks Of Rhyming Words As Interconnected Nodes
+# Visualize Networks Of Rhyming Words
 
 ![A screenshot featuring a network graph visualizing rhyming words from all of Edgar Allan Poe's poems.](https://hosting.photobucket.com/bbcfb0d4-be20-44a0-94dc-65bff8947cf2/1772e123-073d-4da9-b1ab-862f6a5253ff.png)
 
