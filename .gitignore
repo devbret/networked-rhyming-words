@@ -2,3 +2,4 @@ venv/
 .vscode
 network_data.json
 source.txt
+combined_output.txt
