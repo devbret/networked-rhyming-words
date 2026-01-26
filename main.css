@@ -26,3 +26,9 @@ svg {
   fill: magenta;
   font-weight: bold;
 }
+
+.links line,
+.nodes circle,
+.labels text {
+  transition: opacity 150ms linear;
+}
