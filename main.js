@@ -159,15 +159,21 @@ d3.json("network_data.json").then((graph) => {
     .style("border-radius", "8px")
     .style("font-family", "sans-serif");
 
+  const idOf = (v) => (typeof v === "object" ? v.id : v);
+
   node
     .on("mouseover", (event, d) => {
       const nset = neighbors.get(d.id);
       node.attr("opacity", (o) => (nset.has(o.id) ? 1 : 0.15));
-      link.attr("stroke-opacity", (l) =>
-        nset.has(l.source) && nset.has(l.target)
+      link.attr("stroke-opacity", (l) => {
+        const s = idOf(l.source);
+        const t = idOf(l.target);
+        const touchesHovered = s === d.id || t === d.id;
+        const withinNeighborSet = nset.has(s) && nset.has(t);
+        return touchesHovered || withinNeighborSet
           ? linkOpacity(l.value ?? 1)
-          : 0.05,
-      );
+          : 0.05;
+      });
       tooltip.style("opacity", 1).html(tooltipHtml(d));
     })
     .on("mousemove", (event) => {
