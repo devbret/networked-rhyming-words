@@ -38,7 +38,7 @@ Below are the required software programs and instructions for installing and usi
 
 8. Place your `.txt` file into the root directory of this repo
 
-9. Process the raw data using the Python script by running the following command: `python app.py -i my_file_name.txt`
+9. Process the raw data using the Python script by running the following command: `python3 app.py -i my_file_name.txt`
 
 10. Launch the application's frontend by starting a Python server with the following command: `python3 -m http.server`
 
