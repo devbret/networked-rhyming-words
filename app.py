@@ -273,7 +273,7 @@ def export_networkx(graph: Dict[str, List[dict]], graphml_path: Optional[str], g
 
 def main():
     parser = argparse.ArgumentParser(description="Build a rhyme network from lyrics.")
-    parser.add_argument("-i", "--input", default="combined_output.txt", help="Input lyrics file path")
+    parser.add_argument("-i", "--input", default="text.txt", help="Input lyrics file path")
     parser.add_argument("-o", "--output", default="network_data.json", help="Output JSON graph path")
     parser.add_argument("--min-strength", type=float, default=0.6, help="Minimum rhyme strength [0..1]")
     parser.add_argument("--min-freq", type=int, default=1, help="Minimum frequency for a word to be included")
