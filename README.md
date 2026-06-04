@@ -2,17 +2,17 @@
 
 ![A screenshot featuring a network graph visualizing rhyming words from all of Edgar Allan Poe's poems.](https://hosting.photobucket.com/bbcfb0d4-be20-44a0-94dc-65bff8947cf2/1772e123-073d-4da9-b1ab-862f6a5253ff.png)
 
-Analyzes a text file to detect rhymes between line-ending words, builds a network from those relationships and visualizes the resulting structure with D3.
+Analyze a text file to detect rhymes between line-ending words, build a network from those relationships and visualize the resulting structure with D3.
 
-## Overview
+## Application Overview
 
-Analyzes a `TXT` document to construct phonetic rhyme networks based on the last word of each line. Using the CMU Pronouncing Dictionary, this application computes rhyme strength through phoneme matching, stress alignment and similarity when phonetic data is unavailable.
+This application analyzes a plain text document to identify rhyme relationships between the final words of each line. It uses the CMU Pronouncing Dictionary to compare phonetic rhyme endings, while also accounting for stress patterns, word frequency, repeated positions and fallback spelling-based similarity when pronunciation data is unavailable.
 
-Words are represented as nodes annotated with frequency, positions and keys. The resulting graph is exported as JSON and visualized with an interactive D3 layout to reveal rhyme clusters, repetition and relationships across the text.
+The resulting words are represented as nodes in a rhyme network, with connections weighted by rhyme strength. The application exports this structure as JSON, with optional GraphML and GEXF support, as well as visualizes it through an interactive D3 graph where users can explore rhyme families, clusters, repetitions and relationships across the source text.
 
-## Set Up Instructions
+## Basic Setup Instructions
 
-Below are the required software programs and instructions for installing and using this application.
+Below are the required software programs and instructions for installing and using this application on a Linux machine.
 
 ### Programs Needed
 
@@ -26,32 +26,38 @@ Below are the required software programs and instructions for installing and usi
 
 2. Open a terminal
 
-3. Clone this repository using `git` by running the following command: `git clone git@github.com:devbret/networked-rhyming-words.git`
+3. Clone this repository: `git clone git@github.com:devbret/networked-rhyming-words.git`
 
-4. Navigate to the repo's directory by running: `cd networked-rhyming-words`
+4. Navigate to the repo's directory: `cd networked-rhyming-words`
 
-5. Create a virtual environment with this command: `python3 -m venv venv`
+5. Create a virtual environment: `python3 -m venv venv`
 
-6. Activate your virtual environment using: `source venv/bin/activate`
+6. Activate your virtual environment: `source venv/bin/activate`
 
 7. Install the required Python packages: `pip install -r requirements.txt`
 
-8. Place your `.txt` file into the root directory of this repo
+8. Place your `.txt` file at the root of this repo
 
-9. Process the raw data using the Python script by running the following command: `python3 app.py -i my_file_name.txt`
+9. Process the raw data: `python3 app.py -i my_file_name.txt`
 
-10. Launch the application's frontend by starting a Python server with the following command: `python3 -m http.server`
+10. Start an HTTP server: `python3 -m http.server`
 
-11. Access the heatmap visualization in a browser by visiting: `http://localhost:8000`
+11. Access the heatmap visualization in a browser: `http://localhost:8000`
 
-12. Explore and enjoy
+12. When finished, close the HTTP server: `CTRL + c`
+
+13. Exit the virtual environment: `deactivate`
 
 ## Other Considerations
 
 This project repo is intended to demonstrate an ability to do the following:
 
-- Generate an interactive D3 network graph to visualize rhyming relationships between words extracted from a body of text, such as song lyrics or poetry
+- Analyze song lyrics to identify rhyming words and convert them into an interactive network graph
 
-- Enable users to explore rhyme structures by grouping related words, highlighting connections and displaying metadata tooltips
+- Detect rhyme relationships between line-ending words using pronunciation data and stress patterns
+
+- Export rhyme data as JSON, with optional GraphML and GEXF formats
+
+- Visualize rhyme families with D3.js, allowing users to explore connected rhyme clusters
 
 If you have any questions or would like to collaborate, please reach out either on GitHub or via [my website](https://bretbernhoft.com/).
