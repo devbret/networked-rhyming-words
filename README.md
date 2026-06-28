@@ -1,6 +1,6 @@
 # Networks Of Rhyming Words Visualized
 
-![A screenshot featuring a network graph visualizing rhyming words from all of Edgar Allan Poe's poems.](https://hosting.photobucket.com/bbcfb0d4-be20-44a0-94dc-65bff8947cf2/1772e123-073d-4da9-b1ab-862f6a5253ff.png)
+![A screenshot featuring a network graph visualizing rhyming words from all of Edgar Allan Poe's poems.](https://hosting.photobucket.com/bbcfb0d4-be20-44a0-94dc-65bff8947cf2/2da8a8bf-09db-48a0-8ac8-52f76f28be0b.png)
 
 Analyze a text file to detect rhymes between line-ending words, build a network from those relationships and visualize the resulting structure with D3.
 
@@ -42,7 +42,7 @@ Below are the required software programs and instructions for installing and usi
 
 10. Start an HTTP server: `python3 -m http.server`
 
-11. Access the heatmap visualization in a browser: `http://localhost:8000`
+11. Access the visualization in a browser: `http://localhost:8000`
 
 12. When finished, close the HTTP server: `CTRL + c`
 
