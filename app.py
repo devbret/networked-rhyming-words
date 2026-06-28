@@ -86,6 +86,7 @@ def crude_orthographic_rhyme_key(word: str) -> str:
         return w[-3:] if len(w) >= 3 else w
     return w[last_vowel_idx:]
 
+@lru_cache(None)
 def rhyme_key(word: str) -> Tuple[Optional[str], float]:
     phones = phones_for_word_cached(word)
     if phones:
@@ -118,6 +119,23 @@ def levenshtein_tokens(a: List[str], b: List[str]) -> int:
                            dp[i-1][j-1] + cost)
     return dp[la][lb]
 
+@lru_cache(None)
+def base_from_keys(key_a: str, key_b: str) -> float:
+    if key_a == key_b:
+        return 1.0
+    toks_a = key_a.split()
+    toks_b = key_b.split()
+    if not toks_a or not toks_b:
+        toks_a = list(key_a)
+        toks_b = list(key_b)
+    denom = max(len(toks_a), len(toks_b))
+    if denom == 0:
+        return 0.0
+    d = levenshtein_tokens(toks_a, toks_b)
+    return max(0.0, 1.0 - (d / denom))
+
+MAX_STRESS_BONUS = 0.1
+
 def stress_bonus(a: str, b: str) -> float:
     sa = stresses_for_word_cached(a)
     sb = stresses_for_word_cached(b)
@@ -137,7 +155,7 @@ def stress_bonus(a: str, b: str) -> float:
         return 0.0
 
     tail_a, tail_b = spa[ia:], spb[ib:]
-    return 0.1 if tail_a == tail_b else 0.0 
+    return MAX_STRESS_BONUS if tail_a == tail_b else 0.0
 
 def rhyme_strength(a: str, b: str) -> float:
     key_a, conf_a = rhyme_key(a)
@@ -145,18 +163,7 @@ def rhyme_strength(a: str, b: str) -> float:
     if not key_a or not key_b:
         return 0.0
 
-    if key_a == key_b:
-        base = 1.0
-    else:
-        toks_a = key_a.split()
-        toks_b = key_b.split()
-        if not toks_a or not toks_b:
-            toks_a = list(key_a)
-            toks_b = list(key_b)
-        d = levenshtein_tokens(toks_a, toks_b)
-        denom = max(len(toks_a), len(toks_b))
-        base = max(0.0, 1.0 - (d / denom))
-
+    base = base_from_keys(key_a, key_b)
     bonus = stress_bonus(a, b)
     conf = (conf_a + conf_b) / 2.0
     return max(0.0, min(1.0, (base + bonus) * conf))
@@ -187,31 +194,51 @@ def build_graph(
 
     idx_by_word: Dict[str, List[int]] = {w: positions[w] for w in vocab}
 
-    rhyme_map: Dict[str, Dict[str, float]] = {w: {} for w in vocab} 
+    keys: Dict[str, Optional[str]] = {w: rhyme_key(w)[0] for w in vocab}
 
-    n = len(vocab)
-    for i in range(n):
-        a = vocab[i]
-        for j in range(i + 1, n):
-            b = vocab[j]
-            if window is not None:
-                if not any(abs(ia - ib) <= window for ia in idx_by_word[a] for ib in idx_by_word[b]):
-                    continue
-            s = rhyme_strength(a, b)
-            if s >= min_strength:
-                rhyme_map[a][b] = s
-                rhyme_map[b][a] = s
+    buckets: Dict[str, List[str]] = {}
+    for w in vocab:
+        k = keys[w]
+        if k:
+            buckets.setdefault(k, []).append(w)
+
+    rhyme_map: Dict[str, Dict[str, float]] = {w: {} for w in vocab}
+
+    def maybe_add_edge(a: str, b: str) -> None:
+        if window is not None:
+            if not any(abs(ia - ib) <= window
+                       for ia in idx_by_word[a] for ib in idx_by_word[b]):
+                return
+        s = rhyme_strength(a, b)
+        if s >= min_strength:
+            rhyme_map[a][b] = s
+            rhyme_map[b][a] = s
+
+    unique_keys = list(buckets.keys())
+    for i, ka in enumerate(unique_keys):
+        words_a = buckets[ka]
+        m = len(words_a)
+        for x in range(m):
+            for y in range(x + 1, m):
+                maybe_add_edge(words_a[x], words_a[y])
+        for j in range(i + 1, len(unique_keys)):
+            kb = unique_keys[j]
+            if base_from_keys(ka, kb) + MAX_STRESS_BONUS < min_strength:
+                continue
+            for a in words_a:
+                for b in buckets[kb]:
+                    maybe_add_edge(a, b)
 
     nodes: List[dict] = []
     for w in vocab:
-        key, _conf = rhyme_key(w)
         nodes.append({
             "id": w,
             "group": 1,
             "count": freq[w],
             "positions": positions[w],
-            "rhyme_key": key
+            "rhyme_key": keys[w]
         })
+    node_by_id: Dict[str, dict] = {nd["id"]: nd for nd in nodes}
 
     links: List[dict] = []
     for a, nbrs in rhyme_map.items():
@@ -234,9 +261,8 @@ def build_graph(
             visited.add(cur)
             comp.append(cur)
             stack.extend(adj.get(cur, []))
-        for n in nodes:
-            if n["id"] in comp:
-                n["family"] = fam_id
+        for cid in comp:
+            node_by_id[cid]["family"] = fam_id
         fam_id += 1
 
     return {"nodes": nodes, "links": links}
