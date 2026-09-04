@@ -5,11 +5,11 @@ import json
 import logging
 import re
 from functools import lru_cache
-from typing import Dict, List, Optional, Tuple, Iterable
+from typing import Dict, List, Optional, Tuple
 
 import pronouncing
 
-LAST_WORD_RE = re.compile(r"[A-Za-z][A-Za-z'\-]*$")
+WORD_RE = re.compile(r"[^\W\d_](?:[^\W\d_]|['\u2019\-])*")
 
 SMART_QUOTES = {
     "\u2018": "'", "\u2019": "'", "\u201B": "'",
@@ -38,11 +38,10 @@ def split_stanzas(text: str) -> List[List[str]]:
     return stanzas
 
 def find_last_word(line: str) -> Optional[str]:
-    line = line.strip()
-    if not line:
+    words = WORD_RE.findall(line)
+    if not words:
         return None
-    m = LAST_WORD_RE.search(line)
-    return m.group(0).lower() if m else None
+    return words[-1].lower()
 
 @lru_cache(None)
 def phones_for_word_cached(word: str) -> Tuple[str, ...]:
